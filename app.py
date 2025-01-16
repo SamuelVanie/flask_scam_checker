@@ -31,7 +31,7 @@ def load_urls():
 def is_scam(url):
     api_url = "https://url-scan-api-11d8349414c2.herokuapp.com/automatic_ai_scan"
     headers = {
-            "Authorization": "Bearer <token>",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiJ9.870emAVSISgWX3ofXN7ChZBchtPE0YmfPLyCizI89qs",
             "Content-Type": "application/json"
     }
     data = json.dumps({'url': url})
