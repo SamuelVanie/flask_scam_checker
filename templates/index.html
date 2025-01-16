@@ -8,6 +8,18 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='styles.css') }}"
     />
+    <style>
+      .zoomable-image {
+        cursor: pointer;
+        transition: transform 0.25s ease;
+      }
+
+      .zoomed {
+        transform: scale(2);
+        z-index: 1000;
+        position: relative;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -28,11 +40,20 @@
             src="{{ url_for('static', filename='screenshots/' + url.replace('://', '_').replace('/', '_').replace('.', '_') + '.png') }}"
             alt="Screenshot of {{ url }}"
             width="200"
+            class="zoomable-image"
+            onclick="toggleZoom(this)"
           />
         </li>
         {% endfor %}
       </ul>
       {% endfor %} {% endif %}
     </div>
+
+    <script>
+      // JavaScript to handle zooming
+      function toggleZoom(image) {
+        image.classList.toggle("zoomed");
+      }
+    </script>
   </body>
 </html>
