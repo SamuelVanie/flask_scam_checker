@@ -19,6 +19,8 @@ def load_urls():
     with open('urls.txt', 'r') as file:
         for line in file:
             date, url = line.strip().split(',', 1)
+            if date not in urls_by_date:
+                urls_by_date[date] = []
             urls_by_date[date].append(url)
     return urls_by_date
 
@@ -58,17 +60,18 @@ def index():
 # Route to start the scam checking process
 @app.route('/check', methods=['POST'])
 def check_urls():
-    scam_urls = {}
+    scam_urls_by_date = {}
     urls_by_date = load_urls()
 
     for date, urls in urls_by_date.items():
+        scam_urls_by_date[date] = []
         for url in urls:
             if is_scam(url):
                 scam_urls_by_date[date].append(url)
                 screenshot_filename = f"screenshots/{url.replace('://', '_').replace('/', '_')}.png"
                 take_screenshot(url, screenshot_filename)
 
-    return render_template('index.html', scam_urls=scam_urls)
+    return render_template('index.html', scam_urls_by_date=scam_urls_by_date)
 
 if __name__ == '__main__':
     app.run(debug=True)
