@@ -6,6 +6,9 @@ from selenium.webdriver.common.by import By
 import time
 import os
 import json
+import sys
+import subprocess
+import build_urls_file
 
 app = Flask(__name__)
 
@@ -16,7 +19,7 @@ if not os.path.exists('screenshots'):
 # Load URLs from a text file
 def load_urls():
     urls_by_date = {}
-    with open('urls.txt', 'r') as file:
+    with open('output_links.txt', 'r') as file:
         for line in file:
             date, url = line.strip().split(',', 1)
             if date not in urls_by_date:
@@ -61,6 +64,10 @@ def index():
 @app.route('/check', methods=['POST'])
 def check_urls():
     scam_urls_by_date = {}
+
+    result = subprocess.run(["scp",  "-i", "~/.ssh/mailtrap_key.pem", "-o", "stricthostkeychecking=no", "azureuser@9.169.186.209:/var/mail/azureuser", "./mails"])
+
+    build_urls_file.main()
     urls_by_date = load_urls()
 
     for date, urls in urls_by_date.items():
