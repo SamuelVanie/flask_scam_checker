@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import requests
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
@@ -31,7 +31,7 @@ def load_urls():
 def is_scam(url):
     api_url = "https://url-scan-api-11d8349414c2.herokuapp.com/automatic_ai_scan"
     headers = {
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiJ9.870emAVSISgWX3ofXN7ChZBchtPE0YmfPLyCizI89qs",
+            "Authorization": "Bearer <token>",
             "Content-Type": "application/json"
     }
     data = json.dumps({'url': url})
@@ -61,7 +61,8 @@ def take_screenshot(url, filename):
 # Route to display the main page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    urls_by_date = load_urls()
+    return render_template('index.html', urls_by_date=urls_by_date)
 
 # Route to start the scam checking process
 @app.route('/check', methods=['POST'])
@@ -81,7 +82,7 @@ def check_urls():
                 screenshot_filename = f"./static/screenshots/{url.replace('://', '_').replace('/', '_').replace('.', '_')}.png"
                 take_screenshot(url, screenshot_filename)
 
-    return render_template('index.html', scam_urls_by_date=scam_urls_by_date)
+    return jsonify(scam_urls_by_date)
 
 if __name__ == '__main__':
     app.run(debug=True)

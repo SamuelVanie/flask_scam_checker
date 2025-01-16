@@ -37,13 +37,11 @@
   <body>
     <div class="container">
       <h1>Scam Website Checker</h1>
-      <form action="{{ url_for('check_urls') }}" method="POST">
-        <button type="submit">Check URLs</button>
-      </form>
+      <button id="check-urls">Check URLs</button>
 
-      {% if scam_urls_by_date %}
+      {% if urls_by_date %}
       <h2>Scam Websites Detected:</h2>
-      {% for date, urls in scam_urls_by_date.items() %}
+      {% for date, urls in urls_by_date.items() %}
       <h3>Date: {{ date }}</h3>
       <ul>
         {% for url in urls %}
@@ -61,7 +59,7 @@
       </ul>
       {% endfor %} {% endif %}
     </div>
-  
+
     <div id="overlay" class="overlay" onclick="closeOverlay()">
       <img id="overlayImage" src="" alt="Enlarged Image" />
     </div>
@@ -75,9 +73,54 @@
       }
 
       function closeOverlay() {
-        const overlay = document .getElementById("overlay");
+        const overlay = document.getElementById("overlay");
         overlay.style.display = "none";
       }
+
+      document
+        .getElementById("check-urls")
+        .addEventListener("click", function () {
+          fetch("/check", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const container = document.querySelector(".container");
+              let html =
+                '<h1>Scam Website Checker</h1><button id="check-urls">Check URLs</button>';
+
+              if (Object.keys(data).length > 0) {
+                html += "<h2>Scam Websites Detected:</h2>";
+                for (const [date, urls] of Object.entries(data)) {
+                  html += `<h3>Date: ${date}</h3><ul>`;
+                  urls.forEach((url) => {
+                    const screenshotFilename = `./static/screenshots/${url
+                      .replace("://", "_")
+                      .replace("/", "_")
+                      .replace(".", "_")}.png`;
+                    html += `
+                  <li>
+                    <a href="${url}" target="_blank">${url}</a>
+                    <img
+                      src="${screenshotFilename}"
+                      alt="Screenshot of ${url}"
+                      width="200"
+                      class="zoomable-image"
+                      onclick="openOverlay(this.src)"
+                    />
+                  </li>`;
+                  });
+                  html += "</ul>";
+                }
+              }
+
+              container.innerHTML = html;
+            })
+            .catch((error) => console.error("Error:", error));
+        });
     </script>
   </body>
 </html>
