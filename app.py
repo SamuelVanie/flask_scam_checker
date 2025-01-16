@@ -15,7 +15,7 @@ if not os.path.exists('screenshots'):
 
 # Load URLs from a text file
 def load_urls():
-    urls_by_date = defaultdict(list)
+    urls_by_date = {}
     with open('urls.txt', 'r') as file:
         for line in file:
             date, url = line.strip().split(',', 1)
@@ -58,7 +58,7 @@ def index():
 # Route to start the scam checking process
 @app.route('/check', methods=['POST'])
 def check_urls():
-    scam_urls = defaultdict(list)
+    scam_urls = {}
     urls_by_date = load_urls()
 
     for date, urls in urls_by_date.items():
