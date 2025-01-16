@@ -17,7 +17,8 @@
           devShell = pkgs.mkShell {
 
             nativeBuildInputs = with pkgs; [
-	    	      python312Packages.python
+              geckodriver
+	    	  python312Packages.python
               python312Packages.autopep8
               python312Packages.flask
               python312Packages.requests
