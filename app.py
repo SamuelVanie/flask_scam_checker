@@ -50,10 +50,13 @@ def take_screenshot(url, filename):
     options.add_argument('--headless')  # Run in headless mode
 
     driver = webdriver.Firefox(options=options)
-    driver.get(url)
-    time.sleep(2)  # Wait for the page to load
-    driver.save_screenshot(filename)
-    driver.quit()
+    try:
+        driver.get(url)
+        time.sleep(2)  # Wait for the page to load
+        driver.save_screenshot(filename)
+        driver.quit()
+    except Exception as e:
+        print(e)
 
 # Route to display the main page
 @app.route('/')
@@ -65,7 +68,7 @@ def index():
 def check_urls():
     scam_urls_by_date = {}
 
-    result = subprocess.run(["scp",  "-i", "~/.ssh/mailtrap_key.pem", "-o", "stricthostkeychecking=no", "azureuser@9.169.186.209:/var/mail/azureuser", "./mails"])
+    result = subprocess.run(["scp",  "-i", "./mailtrap_key.pem", "-o", "stricthostkeychecking=no", "azureuser@9.169.186.209:/var/mail/azureuser", "./mails"])
 
     build_urls_file.main()
     urls_by_date = load_urls()
@@ -75,7 +78,7 @@ def check_urls():
         for url in urls:
             if is_scam(url):
                 scam_urls_by_date[date].append(url)
-                screenshot_filename = f"screenshots/{url.replace('://', '_').replace('/', '_')}.png"
+                screenshot_filename = f"./static/screenshots/{url.replace('://', '_').replace('/', '_').replace('.', '_')}.png"
                 take_screenshot(url, screenshot_filename)
 
     return render_template('index.html', scam_urls_by_date=scam_urls_by_date)

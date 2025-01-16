@@ -25,7 +25,7 @@
         <li>
           <a href="{{ url }}" target="_blank">{{ url }}</a>
           <img
-            src="{{ url_for('static', filename='screenshots/' + url.replace('://', '_').replace('/', '_') + '.png') }}"
+            src="{{ url_for('static', filename='screenshots/' + url.replace('://', '_').replace('/', '_').replace('.', '_') + '.png') }}"
             alt="Screenshot of {{ url }}"
             width="200"
           />
