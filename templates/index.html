@@ -16,10 +16,12 @@
         <button type="submit">Check URLs</button>
       </form>
 
-      {% if scam_urls %}
+      {% if scam_urls_by_date %}
       <h2>Scam Websites Detected:</h2>
+      {% for date, urls in scam_urls_by_date.items() %}
+      <h3>Date: {{ date }}</h3>
       <ul>
-        {% for url in scam_urls %}
+        {% for url in urls %}
         <li>
           <a href="{{ url }}" target="_blank">{{ url }}</a>
           <img
@@ -30,7 +32,7 @@
         </li>
         {% endfor %}
       </ul>
-      {% endif %}
+      {% endfor %} {% endif %}
     </div>
   </body>
 </html>

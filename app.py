@@ -15,9 +15,12 @@ if not os.path.exists('screenshots'):
 
 # Load URLs from a text file
 def load_urls():
+    urls_by_date = defaultdict(list)
     with open('urls.txt', 'r') as file:
-        urls = file.read().splitlines()
-    return urls
+        for line in file:
+            date, url = line.strip().split(',', 1)
+            urls_by_date[date].append(url)
+    return urls_by_date
 
 # Check if a URL is a scam using the API
 def is_scam(url):
@@ -55,16 +58,15 @@ def index():
 # Route to start the scam checking process
 @app.route('/check', methods=['POST'])
 def check_urls():
-    scam_urls = []
-    urls = load_urls()
+    scam_urls = defaultdict(list)
+    urls_by_date = load_urls()
 
-    for url in urls:
-        if is_scam(url):
-            print(f"The url : {url} is a scam")
-            scam_urls.append(url)
-            screenshot_filename = f"static/screenshots/{url.replace('://', '_').replace('/', '_')}.png"
-            print(f"The filename is {screenshot_filename}")
-            take_screenshot(url, screenshot_filename)
+    for date, urls in urls_by_date.items():
+        for url in urls:
+            if is_scam(url):
+                scam_urls_by_date[date].append(url)
+                screenshot_filename = f"screenshots/{url.replace('://', '_').replace('/', '_')}.png"
+                take_screenshot(url, screenshot_filename)
 
     return render_template('index.html', scam_urls=scam_urls)
 
